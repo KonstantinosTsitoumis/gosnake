@@ -3,5 +3,6 @@ package constants
 import "time"
 
 const (
-	GameSpeed = time.Second / 7
+	MenuSpeed = time.Second / 10
+	GameSpeed = time.Second / 10
 )

@@ -1,8 +1,7 @@
 package entities
 
 import (
-	"gosnake/game/constants"
-	"math/rand/v2"
+	"gosnake/game/utils"
 )
 
 type Apple struct {
@@ -12,8 +11,7 @@ type Apple struct {
 }
 
 func NewApple() Apple {
-	x := rand.IntN(constants.ScreenWidth / constants.GridSize)
-	y := rand.IntN(constants.ScreenHeight / constants.GridSize)
+	x, y := utils.GenerateRandomXY()
 
 	return Apple{
 		Position: Position{
@@ -22,5 +20,19 @@ func NewApple() Apple {
 		},
 		Points: 1,
 		Eaten:  false,
+	}
+}
+
+func (apple *Apple) Update() {
+	if !apple.Eaten {
+		return
+	}
+	print("eaten")
+	x, y := utils.GenerateRandomXY()
+
+	apple.Eaten = false
+	apple.Position = Position{
+		X: x,
+		Y: y,
 	}
 }

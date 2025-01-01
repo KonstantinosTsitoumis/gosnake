@@ -1,5 +1,15 @@
 package entities
 
+import (
+	"fmt"
+	"time"
+)
+
+type buff struct {
+	expiresAt time.Time
+	name      string
+}
+
 type body struct {
 	position Position
 	previous *body
@@ -9,6 +19,7 @@ type body struct {
 type Snake struct {
 	direction string
 	head      *body
+	buff      *buff
 }
 
 func NewSnake(x int, y int) Snake {
@@ -33,6 +44,7 @@ func NewSnake(x int, y int) Snake {
 	return Snake{
 		head:      &head,
 		direction: Direction[Right],
+		buff:      nil,
 	}
 }
 
@@ -106,32 +118,53 @@ func (snake *Snake) eat(nextCellPosition Position) {
 }
 
 // Update
-func (snake *Snake) Update(direction string, apple *Apple, gameover *bool) {
+func (snake *Snake) Update(direction string, apple *Apple, energyDrink *EnergyDrink, gameover *bool) {
+	if snake.buff != nil && snake.buff.expiresAt.Before(time.Now()) {
+		fmt.Println("Buff expired!")
+		snake.buff = nil
+	}
+
 	if snake.GetDirection() != direction {
 		snake.SetDirection(direction)
 	}
 
 	moveX, moveY := DirectionToXY(snake.direction)
 
-	nextPosition := Position{
-		X: snake.head.position.X + moveX,
-		Y: snake.head.position.Y + moveY,
-	}
-
-	// is gameover
-	for _, position := range snake.GetSnakeBodyPositions() {
-		if nextPosition == position {
-			*gameover = true
-			return
-		}
-	}
-
-	// is action
-	if nextPosition == apple.Position {
-		snake.eat(nextPosition)
-		apple.Eaten = true
+	var speed int
+	if snake.buff != nil && snake.buff.name == "speed" {
+		speed = 2
 	} else {
-		snake.Move(nextPosition)
+		speed = 1
+	}
+
+	for i := 0; i < speed; i++ {
+		nextPosition := Position{
+			X: snake.head.position.X + moveX,
+			Y: snake.head.position.Y + moveY,
+		}
+
+		// is gameover
+		for _, position := range snake.GetSnakeBodyPositions() {
+			if nextPosition == position {
+				*gameover = true
+				return
+			}
+		}
+
+		// is action
+		if nextPosition == apple.Position {
+			snake.eat(nextPosition)
+			apple.Eaten = true
+		} else if nextPosition == energyDrink.Position {
+			snake.Move(nextPosition)
+			snake.buff = &buff{
+				name:      "speed",
+				expiresAt: time.Now().Add(3 * time.Second),
+			}
+			energyDrink.Eaten = true
+		} else {
+			snake.Move(nextPosition)
+		}
 	}
 }
 
