@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -120,7 +119,6 @@ func (snake *Snake) eat(nextCellPosition Position) {
 // Update
 func (snake *Snake) Update(direction string, apple *Apple, energyDrink *EnergyDrink, gameover *bool) {
 	if snake.buff != nil && snake.buff.expiresAt.Before(time.Now()) {
-		fmt.Println("Buff expired!")
 		snake.buff = nil
 	}
 
@@ -161,7 +159,7 @@ func (snake *Snake) Update(direction string, apple *Apple, energyDrink *EnergyDr
 				name:      "speed",
 				expiresAt: time.Now().Add(3 * time.Second),
 			}
-			energyDrink.Eaten = true
+			energyDrink.isEaten = true
 		} else {
 			snake.Move(nextPosition)
 		}

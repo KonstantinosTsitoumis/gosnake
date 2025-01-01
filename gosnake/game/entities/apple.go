@@ -27,7 +27,7 @@ func (apple *Apple) Update() {
 	if !apple.Eaten {
 		return
 	}
-	print("eaten")
+
 	x, y := utils.GenerateRandomXY()
 
 	apple.Eaten = false

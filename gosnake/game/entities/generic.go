@@ -6,6 +6,8 @@ type Position struct {
 
 type direction int
 
+var OutOfGrid = Position{X: -10, Y: -10}
+
 const (
 	Up direction = iota
 	Down

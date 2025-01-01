@@ -2,7 +2,6 @@ package states
 
 import (
 	"bytes"
-	"gosnake/assets"
 	"gosnake/game/constants"
 	"gosnake/game/entities"
 	"gosnake/game/utils"
@@ -109,7 +108,6 @@ func (r *RunState) Draw(screen *ebiten.Image) {
 			true,
 		)
 	}
-
 	{
 		applePosition := r.Context.apple.Position
 
@@ -128,15 +126,20 @@ func (r *RunState) Draw(screen *ebiten.Image) {
 		)
 	}
 	{
-
 		energyDrinkPosition := r.Context.energyDrink.Position
 
 		x, y := utils.PositionToGrid(energyDrinkPosition.X, energyDrinkPosition.Y)
 
-		geoM := ebiten.GeoM{}
+		green := color.RGBA{R: 0, G: 255, B: 0, A: 255}
 
-		geoM.Translate(float64(x), float64(y))
-		screen.DrawImage(assets.EnergyDrinkAsset, &ebiten.DrawImageOptions{GeoM: geoM})
-
+		vector.DrawFilledRect(
+			screen,
+			float32(x),
+			float32(y),
+			constants.GridSize,
+			constants.GridSize,
+			green,
+			true,
+		)
 	}
 }

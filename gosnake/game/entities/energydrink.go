@@ -8,8 +8,8 @@ import (
 
 type EnergyDrink struct {
 	Position Position
-	Cooldown time.Duration
-	Eaten    bool
+	Cooldown *time.Time
+	isEaten  bool
 }
 
 func NewEnergyDrink() EnergyDrink {
@@ -20,20 +20,34 @@ func NewEnergyDrink() EnergyDrink {
 			X: x,
 			Y: y,
 		},
-		Cooldown: constants.EnergyDrinkCooldown,
-		Eaten:    false,
+		Cooldown: nil,
+		isEaten:  false,
 	}
 }
 
 func (energyDrink *EnergyDrink) Update(lastUpdate time.Time) {
-	if !energyDrink.Eaten {
+	if !energyDrink.isEaten {
 		return
 	}
 
-	if time.Since(lastUpdate) > constants.EnergyDrinkCooldown {
+	if energyDrink.Position != OutOfGrid {
+		energyDrink.Position = OutOfGrid
+	}
+	if energyDrink.Cooldown == nil {
+		newCooldown := time.Now().Add(constants.EnergyDrinkCooldown)
+		energyDrink.Cooldown = &newCooldown
+	}
+
+	if !energyDrink.Cooldown.Before(time.Now()) {
 		return
 	}
 
-	newEnergyDrink := NewEnergyDrink()
-	energyDrink = &newEnergyDrink
+	x, y := utils.GenerateRandomXY()
+
+	energyDrink.Position = Position{
+		X: x,
+		Y: y,
+	}
+	energyDrink.isEaten = false
+	energyDrink.Cooldown = nil
 }
