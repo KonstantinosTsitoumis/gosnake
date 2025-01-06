@@ -2,6 +2,7 @@ package states
 
 import (
 	"bytes"
+	"fmt"
 	"gosnake/game/constants"
 	"gosnake/game/entities"
 	"gosnake/game/utils"
@@ -24,6 +25,7 @@ type RunContext struct {
 	energyDrink entities.EnergyDrink
 	lastUpdate  time.Time
 	gameover    bool
+	score       int
 }
 
 func NewRunState() *RunState {
@@ -41,6 +43,7 @@ func NewRunState() *RunState {
 			apple:       apple,
 			energyDrink: energyDrink,
 			lastUpdate:  time.Now(),
+			score:       0,
 		},
 	}
 }
@@ -72,18 +75,24 @@ func (r *RunState) Update() (string, error) {
 	}
 
 	r.Context.snake.Update(direction, &r.Context.apple, &r.Context.energyDrink, &r.Context.gameover)
-	r.Context.apple.Update()
+	r.Context.apple.Update(&r.Context.score)
 	r.Context.energyDrink.Update(r.Context.lastUpdate)
 
 	return "", nil
 }
 
 func (r *RunState) Draw(screen *ebiten.Image) {
-	if r.Context.gameover {
-		s, _ := text.NewGoTextFaceSource(bytes.NewReader(fonts.MPlus1pRegular_ttf))
+	s, _ := text.NewGoTextFaceSource(bytes.NewReader(fonts.MPlus1pRegular_ttf))
+	op := &text.DrawOptions{}
+	op.ColorScale.ScaleWithColor(color.White)
+	op.GeoM.Translate(0.0, 0.0)
+	text.Draw(screen, fmt.Sprintf("score %d", r.Context.score), &text.GoTextFace{
+		Source: s,
+		Size:   24,
+	}, op)
 
-		op := &text.DrawOptions{}
-		op.ColorScale.ScaleWithColor(color.White)
+	if r.Context.gameover {
+		op.GeoM.Translate(200.0, 200.0)
 		text.Draw(screen, "Game Over", &text.GoTextFace{
 			Source: s,
 			Size:   24,

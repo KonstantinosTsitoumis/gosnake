@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"gosnake/game/constants"
 	"time"
 )
 
@@ -139,6 +140,22 @@ func (snake *Snake) Update(direction string, apple *Apple, energyDrink *EnergyDr
 		nextPosition := Position{
 			X: snake.head.position.X + moveX,
 			Y: snake.head.position.Y + moveY,
+		}
+
+		if nextPosition.Y == constants.MinHeightY {
+			nextPosition.Y = constants.MaxHeightY + 1
+		}
+
+		if nextPosition.Y == constants.MaxHeightY {
+			nextPosition.Y = constants.MinHeightY - 1
+		}
+
+		if nextPosition.X == constants.MinWidthX {
+			nextPosition.X = constants.MaxWidthX - 1
+		}
+
+		if nextPosition.X == constants.MaxWidthX {
+			nextPosition.X = constants.MinWidthX + 1
 		}
 
 		// is gameover

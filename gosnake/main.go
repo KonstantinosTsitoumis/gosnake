@@ -1,7 +1,6 @@
 package main
 
 import (
-	"gosnake/assets"
 	"gosnake/game"
 	"log"
 
@@ -9,8 +8,6 @@ import (
 )
 
 func main() {
-	assets.Init()
-
 	game_ := game.NewGame()
 
 	x, y := game_.Layout(0, 0)

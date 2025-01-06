@@ -23,10 +23,12 @@ func NewApple() Apple {
 	}
 }
 
-func (apple *Apple) Update() {
+func (apple *Apple) Update(score *int) {
 	if !apple.Eaten {
 		return
 	}
+
+	*score++
 
 	x, y := utils.GenerateRandomXY()
 
